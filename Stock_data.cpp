@@ -2,63 +2,64 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <algorithm>
 #include <string>
+#include <vector>
 
-double parseDollarValue(const std::string& value) {
-    std::string cleanValue = value;
+using namespace std;
 
-    size_t pos = value.find_first_not_of("$ \t\n\r");
-    if (pos != std::string::npos) {
-        cleanValue.erase(0, pos);
+// Convert a string with a dollar sign to a double
+double parseDollarValue(const string& value) {
+    // Removing the dollar sign 
+    string numericValue = value;
+    if (!value.empty() && value[0] == '$') {
+        numericValue = value.substr(1);
     }
-
-    size_t pos2 = cleanValue.find_last_not_of("$ \t\n\r");
-    if (pos2 != std::string::npos) {
-        cleanValue.erase(pos2 + 1);
-    }
-
-    if (cleanValue.empty()) {
-        throw std::invalid_argument("Invalid value: Empty string");
-    }
-
-    return std::stod(cleanValue);
+    // Convert to double
+    return stod(numericValue);
 }
 
-std::vector<StockData> parseCSV(const std::string& filename) {
-    std::vector<StockData> data;
-    std::ifstream file(filename);
+// Read file
+vector<StockData> parseCSV(const string& filename) {
+    vector<StockData> data;
+    ifstream file(filename);
 
+    // Check if file opened successfully
     if (!file.is_open()) {
-        std::cerr << "Unable to open file: " << filename << std::endl;
+        cout << "Could not open file: " << filename << endl;
         return data;
     }
 
-    std::string line;
-    std::getline(file, line);
+    string line;
+    getline(file, line); // Skip the header line
 
-    while (std::getline(file, line)) {
-        std::stringstream ss(line);
-        std::string date, close, volume, open, high, low;
+    // Read file line by line
+    while (getline(file, line)) {
+        stringstream ss(line);
+        string date, close, volume, open, high, low;
 
-        if (std::getline(ss, date, ',') &&
-            std::getline(ss, close, ',') &&
-            std::getline(ss, volume, ',') &&
-            std::getline(ss, open, ',') &&
-            std::getline(ss, high, ',') &&
-            std::getline(ss, low, ',')) {
+        
+        getline(ss, date, ',');
+        getline(ss, close, ',');
+        getline(ss, volume, ',');
+        getline(ss, open, ',');
+        getline(ss, high, ',');
+        getline(ss, low, ',');
 
-            data.push_back({
-                date,
-                parseDollarValue(close),
-                std::stod(volume),
-                parseDollarValue(open),
-                parseDollarValue(high),
-                parseDollarValue(low)
-                });
+        // Create a StockData object fo our vector
+        try {
+            StockData stock;
+            stock.date = date;
+            stock.close = parseDollarValue(close);
+            stock.volume = stod(volume);
+            stock.open = parseDollarValue(open);
+            stock.high = parseDollarValue(high);
+            stock.low = parseDollarValue(low);
+
+            data.push_back(stock);
         }
-        else {
-            std::cerr << "Error parsing line: " << line << std::endl;
+        catch (const exception& e) {
+            cout << "Error parsing line: " << line <<"\n";
+            cout << "Error details: " << e.what() <<"\n";
         }
     }
 

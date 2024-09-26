@@ -5,19 +5,21 @@
 
 using namespace std;
 
-// Function to calculate Simple Moving Average (SMA)
 vector<double> calculateSMA(const vector<double>& prices, int period) {
-    vector<double> sma;
+    vector<double> sma(prices.size() - period + 1);
     double sum = 0;
-    for (size_t i = 0; i < prices.size(); ++i) {
+
+    for (int i = 0; i < period; ++i) {
         sum += prices[i];
-        if (i >= period - 1) {
-            if (i >= period) {
-                sum -= prices[i - period];  
-            }
-            sma.push_back(sum / period);  
-        }
     }
+
+    sma[0] = sum / period;
+
+    for (int i = period; i < prices.size(); ++i) {
+        sum += prices[i] - prices[i - period];
+        sma[i - period + 1] = sum / period;
+    }
+
     return sma;
 }
 
@@ -39,7 +41,7 @@ int main() {
     vector<double> smaDates(x.begin() + (smaPeriod - 1), x.end());
 
 
-    std::pair<double, double> result = linearRegression(smaDates, smaPrices);
+    pair<double, double> result = linearRegression(smaDates, smaPrices);
     double m = result.first;
     double c = result.second;
 

@@ -3,11 +3,11 @@
 
 #include <vector>
 #include <utility>
+using namespace std;
 
-// Function to perform linear regression
-std::pair<double, double> linearRegression(const std::vector<double>& x, const std::vector<double>& y);
 
-// Function to predict a future stock price
+pair<double, double> linearRegression(const vector<double>& x, const vector<double>& y);
+
 double predictPrice(double x, double m, double c);
 
 #endif 
