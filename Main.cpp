@@ -3,9 +3,11 @@
 #include "linear_regression.h"
 #include "date_utils.h"
 
+using namespace std;
+
 // Function to calculate Simple Moving Average (SMA)
-std::vector<double> calculateSMA(const std::vector<double>& prices, int period) {
-    std::vector<double> sma;
+vector<double> calculateSMA(const vector<double>& prices, int period) {
+    vector<double> sma;
     double sum = 0;
     for (size_t i = 0; i < prices.size(); ++i) {
         sum += prices[i];
@@ -21,9 +23,9 @@ std::vector<double> calculateSMA(const std::vector<double>& prices, int period) 
 
 int main() {
     // Parse stock data from CSV file
-    std::vector<StockData> data = parseCSV("History_MSFT.csv");
+    vector<StockData> data = parseCSV("History_MSFT.csv");  //Use any stock data file
 
-    std::vector<double> x, y;
+    vector<double> x, y;
 
     for (const auto& record : data) {
         x.push_back(dateToNumber(record.date));
@@ -32,9 +34,9 @@ int main() {
 
     
     int smaPeriod = 10;
-    std::vector<double> smaPrices = calculateSMA(y, smaPeriod);
+    vector<double> smaPrices = calculateSMA(y, smaPeriod);
 
-    std::vector<double> smaDates(x.begin() + (smaPeriod - 1), x.end());
+    vector<double> smaDates(x.begin() + (smaPeriod - 1), x.end());
 
 
     std::pair<double, double> result = linearRegression(smaDates, smaPrices);
@@ -42,11 +44,11 @@ int main() {
     double c = result.second;
 
     
-    std::string futureDate = "12/31/2024";
+    string futureDate = "12/31/2024"; //Use any forthcoming date
     double futureX = dateToNumber(futureDate);
     double predictedPrice = predictPrice(futureX, m, c);
 
-    std::cout << "Predicted stock price on " << futureDate << " using SMA is: $" << predictedPrice << std::endl;
+    cout << "Predicted Microsoft stock price on " << futureDate << " using SMA is: $" << predictedPrice << std::endl;
 
     return 0;
 }

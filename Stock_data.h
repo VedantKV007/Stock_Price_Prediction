@@ -14,7 +14,7 @@ struct StockData {
     double low;
 };
 
-vector<StockData> parseCSV(const std::string& filename);
+vector<StockData> parseCSV(const string& filename);
 
 double parseDollarValue(const string& value);
 
